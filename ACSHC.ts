@@ -26,13 +26,23 @@ import {
     myMeat
 } from 'kolmafia'
 
-export function main(requestedNumber: string = '', simOption: string = ''): void {
+export function main(arg: string = ''): void {
 
     type BoozeTree = {[x in string]: {booze: string, other: string}}
     type Quantities = {baseBoozes: {[x in string]: number}, intermediateBoozes: {[x in string]: number}, garnishes: {[x in string]: number}, finishers: {[x in string]: number}}
 
     const finishedDrinks = ['tropical swill', 'pink pony', "slip 'n' slide", 'fuzzbump', 'ocean motion', 'fruity girl swill', 'ducha de oro', 'horizontal tango', 'roll in the hay', "a little sump'm sump'm", 'blended frozen swill', 'slap and tickle', "rockin' wagon", 'perpendicular hula', 'calle de miel', 'Neuromancer', 'vodka stratocaster', 'Mon Tiki', 'teqiwila slammer', 'Divine', 'Gordon Bennett', 'gimlet', 'yellow brick road', 'mandarina colada', 'tangarita', 'Mae West', 'prussian cathouse']
     
+    let requestedNumber = ''
+    let simOption = ''
+    let reachedSpace = false
+
+    for (let i = 0; i < arg.length; i++) {
+        if (arg[i] === ' ') reachedSpace = true
+        else if (!reachedSpace && !isNaN(Number(arg[i]))) requestedNumber += arg[i]
+        else if (reachedSpace) simOption += arg[i]
+    }
+
     const sim = simOption.toLowerCase() === 'sim' ? true : false
     const levelOneAC: BoozeTree = {} // these trees are to store ingredient associations. level one is the final drink and its ingredients, level two is the intermediate drink and its ingredients, and level three SHC is a special one to associate SHC garnishes with their base garnish
     const levelOneSHC: BoozeTree = {}
@@ -163,6 +173,9 @@ export function main(requestedNumber: string = '', simOption: string = ''): void
                 return
             }
         }
+        print('')
+        print('You have crafted:')
+        for (let eachCraft of toCraft) print(eachCraft[1].toString() + ' ' + ((eachCraft[1] === 1) ? eachCraft[0] : Item.get(eachCraft[0]).plural))
         print('Done!')
     }
 
@@ -349,6 +362,9 @@ export function main(requestedNumber: string = '', simOption: string = ''): void
         }
     }
 
+    // print(requestedNumber)
+    // print(simOption)
+
     if (isNaN(numberOfDrinksRequested) || numberOfDrinksRequested <= 0 || !Number.isInteger(numberOfDrinksRequested) || numberOfDrinksRequested > 10) {
         return print('You need to enter a number of drinks between 1 and 10. You can also add "sim" to the end to get a simulation of what this script would do.')
     }
@@ -370,6 +386,7 @@ export function main(requestedNumber: string = '', simOption: string = ''): void
         (myClass().toString() === 'Accordion Thief' || myClass().toString() === 'Disco Bandit') &&
         guildStoreAvailable()
     ) relevantSkill = 'SHC'
+
 
     print('Calculating possible ' + relevantSkill + ' drinks...')
     
@@ -425,6 +442,7 @@ export function main(requestedNumber: string = '', simOption: string = ''): void
             quantities.finishers[tree[finishedDrinks[i]].other]--
             i--
             if (finalCombination.length === numberOfDrinksRequested) { // on the off chance that this satisfies the drinks requested, just end the script. finalBuy is unnecessary
+                for (let drink of finalCombination) addToDo(drink, toCraft)
                 finalCraft()
                 return
             }

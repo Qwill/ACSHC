@@ -84,7 +84,9 @@ function _arrayLikeToArray(arr, len) {
   return arr2;
 }
 function main() {
-  var requestedNumber = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "", simOption = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "", finishedDrinks = ["tropical swill", "pink pony", "slip 'n' slide", "fuzzbump", "ocean motion", "fruity girl swill", "ducha de oro", "horizontal tango", "roll in the hay", "a little sump'm sump'm", "blended frozen swill", "slap and tickle", "rockin' wagon", "perpendicular hula", "calle de miel", "Neuromancer", "vodka stratocaster", "Mon Tiki", "teqiwila slammer", "Divine", "Gordon Bennett", "gimlet", "yellow brick road", "mandarina colada", "tangarita", "Mae West", "prussian cathouse"], sim = simOption.toLowerCase() === "sim", levelOneAC = {}, levelOneSHC = {}, levelTwoAC = {}, levelTwoSHC = {}, levelThreeSHC = {}, numberOfDrinksRequested = Number(requestedNumber), toCraft = [], toBuy = [], originalPref = (0, import_kolmafia.getProperty)("autoSatisfyWithNPCs"), mysticality = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Mysticality")), moxie = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Moxie")), quantities = {
+  for (var arg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "", finishedDrinks = ["tropical swill", "pink pony", "slip 'n' slide", "fuzzbump", "ocean motion", "fruity girl swill", "ducha de oro", "horizontal tango", "roll in the hay", "a little sump'm sump'm", "blended frozen swill", "slap and tickle", "rockin' wagon", "perpendicular hula", "calle de miel", "Neuromancer", "vodka stratocaster", "Mon Tiki", "teqiwila slammer", "Divine", "Gordon Bennett", "gimlet", "yellow brick road", "mandarina colada", "tangarita", "Mae West", "prussian cathouse"], requestedNumber = "", simOption = "", reachedSpace = !1, i = 0; i < arg.length; i++)
+    arg[i] === " " ? reachedSpace = !0 : !reachedSpace && !isNaN(Number(arg[i])) ? requestedNumber += arg[i] : reachedSpace && (simOption += arg[i]);
+  var sim = simOption.toLowerCase() === "sim", levelOneAC = {}, levelOneSHC = {}, levelTwoAC = {}, levelTwoSHC = {}, levelThreeSHC = {}, numberOfDrinksRequested = Number(requestedNumber), toCraft = [], toBuy = [], originalPref = (0, import_kolmafia.getProperty)("autoSatisfyWithNPCs"), mysticality = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Mysticality")), moxie = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Moxie")), quantities = {
     baseBoozes: {},
     intermediateBoozes: {},
     garnishes: {},
@@ -97,8 +99,8 @@ function main() {
   }, bestCombination = [], itemsUsedInCombination = [0, 0, 0], itemsToBuyInCombination = [], remainingStills = availableStills;
   function combinator(input, output, data, start, end, index, size) {
     index === size && output.push(data.slice(0, size));
-    for (var i2 = start; i2 <= end && end - i2 + 1 >= size - index; i2++)
-      data[index] = input[i2], combinator(input, output, data, i2 + 1, end, index + 1, size);
+    for (var _i = start; _i <= end && end - _i + 1 >= size - index; _i++)
+      data[index] = input[_i], combinator(input, output, data, _i + 1, end, index + 1, size);
   }
   function getItemAmount(whichItem) {
     return (0, import_kolmafia.itemAmount)(import_kolmafia.Item.get(whichItem));
@@ -134,9 +136,9 @@ function main() {
     }
   }
   function addToDo(whichItem, output) {
-    for (var i2 = 0; i2 < output.length; i2++)
-      if (output[i2][0] === whichItem) {
-        output[i2][1]++;
+    for (var _i2 = 0; _i2 < output.length; _i2++)
+      if (output[_i2][0] === whichItem) {
+        output[_i2][1]++;
         return;
       }
     output.push([whichItem, 1]);
@@ -213,6 +215,18 @@ function main() {
     } finally {
       _iterator5.f();
     }
+    (0, import_kolmafia.print)(""), (0, import_kolmafia.print)("You have crafted:");
+    var _iterator6 = _createForOfIteratorHelper(toCraft), _step6;
+    try {
+      for (_iterator6.s(); !(_step6 = _iterator6.n()).done; ) {
+        var _eachCraft2 = _step6.value;
+        (0, import_kolmafia.print)(_eachCraft2[1].toString() + " " + (_eachCraft2[1] === 1 ? _eachCraft2[0] : import_kolmafia.Item.get(_eachCraft2[0]).plural));
+      }
+    } catch (err) {
+      _iterator6.e(err);
+    } finally {
+      _iterator6.f();
+    }
     (0, import_kolmafia.print)("Done!");
   }
   function getACDrinkPossibility(drink2, newQuantities) {
@@ -263,156 +277,156 @@ function main() {
     canBuy && relevantSkill === "AC" ? buyAC() : canBuy && relevantSkill === "SHC" ? buySHC() : !canBuy && relevantSkill === "AC" ? noBuyAC() : !canBuy && relevantSkill === "SHC" && noBuySHC();
   }
   function noBuyAC() {
-    var _iterator6 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
+    var _iterator7 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
       return import_kolmafia.Item.get(drink2).quality === "good";
-    })), _step6;
-    try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done; )
-        for (var finishedDrink = _step6.value, i2 = 0; i2 < (0, import_kolmafia.creatableAmount)(import_kolmafia.Item.get(finishedDrink)) && i2 < 2; i2++)
-          possibleDrinks.push(finishedDrink);
-    } catch (err) {
-      _iterator6.e(err);
-    } finally {
-      _iterator6.f();
-    }
-    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
-    var _iterator7 = _createForOfIteratorHelper(possibleCombinations), _step7;
+    })), _step7;
     try {
       for (_iterator7.s(); !(_step7 = _iterator7.n()).done; )
-        for (var possibility = _step7.value, newQuantities = JSON.parse(JSON.stringify(quantities)), usedItems = [0, 0, 0], _i = 0; _i < possibility.length; _i++) {
-          if (newQuantities.finishers[levelOneAC[possibility[_i]].other] > 0)
-            newQuantities.finishers[levelOneAC[possibility[_i]].other]--;
-          else {
-            store(newQuantities, possibility.slice(0, _i), usedItems);
-            break;
-          }
-          if (newQuantities.intermediateBoozes[levelOneAC[possibility[_i]].booze] > 0)
-            newQuantities.intermediateBoozes[levelOneAC[possibility[_i]].booze]--, usedItems[0]++;
-          else if (newQuantities.baseBoozes[levelTwoAC[levelOneAC[possibility[_i]].booze].booze] > 0 && newQuantities.garnishes[levelTwoAC[levelOneAC[possibility[_i]].booze].other] > 0)
-            newQuantities.baseBoozes[levelTwoAC[levelOneAC[possibility[_i]].booze].booze]--, newQuantities.garnishes[levelTwoAC[levelOneAC[possibility[_i]].booze].other]--;
-          else {
-            store(newQuantities, possibility.slice(0, _i), usedItems);
-            break;
-          }
-          _i === possibility.length - 1 && store(newQuantities, possibility, usedItems);
-        }
+        for (var finishedDrink = _step7.value, _i3 = 0; _i3 < (0, import_kolmafia.creatableAmount)(import_kolmafia.Item.get(finishedDrink)) && _i3 < 2; _i3++)
+          possibleDrinks.push(finishedDrink);
     } catch (err) {
       _iterator7.e(err);
     } finally {
       _iterator7.f();
     }
-  }
-  function noBuySHC() {
-    var _iterator8 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
-      return import_kolmafia.Item.get(drink2).quality === "awesome";
-    })), _step8;
+    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
+    var _iterator8 = _createForOfIteratorHelper(possibleCombinations), _step8;
     try {
-      var _loop = function() {
-        for (var finishedDrink = _step8.value, tempQuantities2 = JSON.parse(JSON.stringify(quantities)), tempStills2 = {
-          stills: availableStills
-        }; possibleDrinks.filter(function(d) {
-          return d === finishedDrink;
-        }).length < 2 && getSHCDrinkPossibility(finishedDrink, tempQuantities2, tempStills2); )
-          possibleDrinks.push(finishedDrink);
-      };
       for (_iterator8.s(); !(_step8 = _iterator8.n()).done; )
-        _loop();
+        for (var possibility = _step8.value, newQuantities = JSON.parse(JSON.stringify(quantities)), usedItems = [0, 0, 0], _i4 = 0; _i4 < possibility.length; _i4++) {
+          if (newQuantities.finishers[levelOneAC[possibility[_i4]].other] > 0)
+            newQuantities.finishers[levelOneAC[possibility[_i4]].other]--;
+          else {
+            store(newQuantities, possibility.slice(0, _i4), usedItems);
+            break;
+          }
+          if (newQuantities.intermediateBoozes[levelOneAC[possibility[_i4]].booze] > 0)
+            newQuantities.intermediateBoozes[levelOneAC[possibility[_i4]].booze]--, usedItems[0]++;
+          else if (newQuantities.baseBoozes[levelTwoAC[levelOneAC[possibility[_i4]].booze].booze] > 0 && newQuantities.garnishes[levelTwoAC[levelOneAC[possibility[_i4]].booze].other] > 0)
+            newQuantities.baseBoozes[levelTwoAC[levelOneAC[possibility[_i4]].booze].booze]--, newQuantities.garnishes[levelTwoAC[levelOneAC[possibility[_i4]].booze].other]--;
+          else {
+            store(newQuantities, possibility.slice(0, _i4), usedItems);
+            break;
+          }
+          _i4 === possibility.length - 1 && store(newQuantities, possibility, usedItems);
+        }
     } catch (err) {
       _iterator8.e(err);
     } finally {
       _iterator8.f();
     }
-    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
-    var _iterator9 = _createForOfIteratorHelper(possibleCombinations), _step9;
-    try {
-      for (_iterator9.s(); !(_step9 = _iterator9.n()).done; )
-        for (var possibility = _step9.value, tempQuantities = JSON.parse(JSON.stringify(quantities)), tempStills = {
-          stills: availableStills
-        }, usedItems = [0, 0, 0], i2 = 0; i2 < possibility.length; i2++) {
-          if (!getSHCDrinkPossibility(possibility[i2], tempQuantities, tempStills, usedItems)) {
-            store(tempQuantities, possibility.slice(0, i2), usedItems, [], tempStills.stills);
-            break;
-          }
-          i2 === possibility.length - 1 && store(tempQuantities, possibility, usedItems, [], tempStills.stills);
-        }
-    } catch (err) {
-      _iterator9.e(err);
-    } finally {
-      _iterator9.f();
-    }
   }
-  function buyAC() {
-    var _iterator10 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
-      return import_kolmafia.Item.get(drink2).quality === "good";
-    })), _step10;
-    try {
-      var _loop2 = function() {
-        for (var finishedDrink = _step10.value, tempQuantities2 = JSON.parse(JSON.stringify(quantities)); possibleDrinks.filter(function(d) {
-          return d === finishedDrink;
-        }).length < 2 && getACDrinkPossibility(finishedDrink, tempQuantities2); )
-          possibleDrinks.push(finishedDrink);
-      };
-      for (_iterator10.s(); !(_step10 = _iterator10.n()).done; )
-        _loop2();
-    } catch (err) {
-      _iterator10.e(err);
-    } finally {
-      _iterator10.f();
-    }
-    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
-    var _iterator11 = _createForOfIteratorHelper(possibleCombinations), _step11;
-    try {
-      for (_iterator11.s(); !(_step11 = _iterator11.n()).done; )
-        for (var possibility = _step11.value, tempQuantities = JSON.parse(JSON.stringify(quantities)), garnishesToBuy = [], usedItems = [0, 0, 0], i2 = 0; i2 < possibility.length; i2++) {
-          if (!getACDrinkPossibility(possibility[i2], tempQuantities, usedItems, garnishesToBuy)) {
-            store(tempQuantities, possibility.slice(0, i2), usedItems, garnishesToBuy);
-            break;
-          }
-          i2 === possibility.length - 1 && store(tempQuantities, possibility, usedItems, garnishesToBuy);
-        }
-    } catch (err) {
-      _iterator11.e(err);
-    } finally {
-      _iterator11.f();
-    }
-  }
-  function buySHC() {
-    var _iterator12 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
+  function noBuySHC() {
+    var _iterator9 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
       return import_kolmafia.Item.get(drink2).quality === "awesome";
-    })), _step12;
+    })), _step9;
     try {
-      var _loop3 = function() {
-        for (var finishedDrink = _step12.value, tempQuantities2 = JSON.parse(JSON.stringify(quantities)), tempStills2 = {
+      var _loop = function() {
+        for (var finishedDrink = _step9.value, tempQuantities2 = JSON.parse(JSON.stringify(quantities)), tempStills2 = {
           stills: availableStills
         }; possibleDrinks.filter(function(d) {
           return d === finishedDrink;
         }).length < 2 && getSHCDrinkPossibility(finishedDrink, tempQuantities2, tempStills2); )
           possibleDrinks.push(finishedDrink);
       };
+      for (_iterator9.s(); !(_step9 = _iterator9.n()).done; )
+        _loop();
+    } catch (err) {
+      _iterator9.e(err);
+    } finally {
+      _iterator9.f();
+    }
+    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
+    var _iterator10 = _createForOfIteratorHelper(possibleCombinations), _step10;
+    try {
+      for (_iterator10.s(); !(_step10 = _iterator10.n()).done; )
+        for (var possibility = _step10.value, tempQuantities = JSON.parse(JSON.stringify(quantities)), tempStills = {
+          stills: availableStills
+        }, usedItems = [0, 0, 0], _i5 = 0; _i5 < possibility.length; _i5++) {
+          if (!getSHCDrinkPossibility(possibility[_i5], tempQuantities, tempStills, usedItems)) {
+            store(tempQuantities, possibility.slice(0, _i5), usedItems, [], tempStills.stills);
+            break;
+          }
+          _i5 === possibility.length - 1 && store(tempQuantities, possibility, usedItems, [], tempStills.stills);
+        }
+    } catch (err) {
+      _iterator10.e(err);
+    } finally {
+      _iterator10.f();
+    }
+  }
+  function buyAC() {
+    var _iterator11 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
+      return import_kolmafia.Item.get(drink2).quality === "good";
+    })), _step11;
+    try {
+      var _loop2 = function() {
+        for (var finishedDrink = _step11.value, tempQuantities2 = JSON.parse(JSON.stringify(quantities)); possibleDrinks.filter(function(d) {
+          return d === finishedDrink;
+        }).length < 2 && getACDrinkPossibility(finishedDrink, tempQuantities2); )
+          possibleDrinks.push(finishedDrink);
+      };
+      for (_iterator11.s(); !(_step11 = _iterator11.n()).done; )
+        _loop2();
+    } catch (err) {
+      _iterator11.e(err);
+    } finally {
+      _iterator11.f();
+    }
+    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
+    var _iterator12 = _createForOfIteratorHelper(possibleCombinations), _step12;
+    try {
       for (_iterator12.s(); !(_step12 = _iterator12.n()).done; )
-        _loop3();
+        for (var possibility = _step12.value, tempQuantities = JSON.parse(JSON.stringify(quantities)), garnishesToBuy = [], usedItems = [0, 0, 0], _i6 = 0; _i6 < possibility.length; _i6++) {
+          if (!getACDrinkPossibility(possibility[_i6], tempQuantities, usedItems, garnishesToBuy)) {
+            store(tempQuantities, possibility.slice(0, _i6), usedItems, garnishesToBuy);
+            break;
+          }
+          _i6 === possibility.length - 1 && store(tempQuantities, possibility, usedItems, garnishesToBuy);
+        }
     } catch (err) {
       _iterator12.e(err);
     } finally {
       _iterator12.f();
     }
-    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
-    var _iterator13 = _createForOfIteratorHelper(possibleCombinations), _step13;
+  }
+  function buySHC() {
+    var _iterator13 = _createForOfIteratorHelper(finishedDrinks.filter(function(drink2) {
+      return import_kolmafia.Item.get(drink2).quality === "awesome";
+    })), _step13;
     try {
-      for (_iterator13.s(); !(_step13 = _iterator13.n()).done; )
-        for (var possibility = _step13.value, tempQuantities = JSON.parse(JSON.stringify(quantities)), tempStills = {
+      var _loop3 = function() {
+        for (var finishedDrink = _step13.value, tempQuantities2 = JSON.parse(JSON.stringify(quantities)), tempStills2 = {
           stills: availableStills
-        }, usedItems = [0, 0, 0], garnishesToBuy = [], i2 = 0; i2 < possibility.length; i2++) {
-          if (!getSHCDrinkPossibility(possibility[i2], tempQuantities, tempStills, usedItems, garnishesToBuy)) {
-            store(tempQuantities, possibility.slice(0, i2), usedItems, garnishesToBuy, tempStills.stills);
-            break;
-          }
-          i2 === possibility.length - 1 && store(tempQuantities, possibility, usedItems, garnishesToBuy, tempStills.stills);
-        }
+        }; possibleDrinks.filter(function(d) {
+          return d === finishedDrink;
+        }).length < 2 && getSHCDrinkPossibility(finishedDrink, tempQuantities2, tempStills2); )
+          possibleDrinks.push(finishedDrink);
+      };
+      for (_iterator13.s(); !(_step13 = _iterator13.n()).done; )
+        _loop3();
     } catch (err) {
       _iterator13.e(err);
     } finally {
       _iterator13.f();
+    }
+    possibleDrinks.length < remainingNumberOfDrinks ? possibleCombinations = [possibleDrinks] : combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks);
+    var _iterator14 = _createForOfIteratorHelper(possibleCombinations), _step14;
+    try {
+      for (_iterator14.s(); !(_step14 = _iterator14.n()).done; )
+        for (var possibility = _step14.value, tempQuantities = JSON.parse(JSON.stringify(quantities)), tempStills = {
+          stills: availableStills
+        }, usedItems = [0, 0, 0], garnishesToBuy = [], _i7 = 0; _i7 < possibility.length; _i7++) {
+          if (!getSHCDrinkPossibility(possibility[_i7], tempQuantities, tempStills, usedItems, garnishesToBuy)) {
+            store(tempQuantities, possibility.slice(0, _i7), usedItems, garnishesToBuy, tempStills.stills);
+            break;
+          }
+          _i7 === possibility.length - 1 && store(tempQuantities, possibility, usedItems, garnishesToBuy, tempStills.stills);
+        }
+    } catch (err) {
+      _iterator14.e(err);
+    } finally {
+      _iterator14.f();
     }
   }
   if (isNaN(numberOfDrinksRequested) || numberOfDrinksRequested <= 0 || !Number.isInteger(numberOfDrinksRequested) || numberOfDrinksRequested > 10)
@@ -422,8 +436,8 @@ function main() {
   if (!("Queue Du Coq cocktailcrafting kit" in (0, import_kolmafia.getCampground)()))
     return (0, import_kolmafia.print)("You need to install a Queue Du Coq cocktailcrafting kit in your campground to craft advanced drinks.");
   (0, import_kolmafia.inHardcore)() || (0, import_kolmafia.print)("You don't seem to be in a Hardcore run. This script will still work, but it will be slow and you probably have better options."), (0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Superhuman Cocktailcrafting")) && ((0, import_kolmafia.myClass)().toString() === "Accordion Thief" || (0, import_kolmafia.myClass)().toString() === "Disco Bandit") && (0, import_kolmafia.guildStoreAvailable)() && (relevantSkill = "SHC"), (0, import_kolmafia.print)("Calculating possible " + relevantSkill + " drinks..."), (0, import_kolmafia.hippyStoreAvailable)() && ((0, import_kolmafia.haveOutfit)("Filthy Hippy Disguise") && moxie >= 15 && ((0, import_kolmafia.getProperty)("warProgress") === "unstarted" || (0, import_kolmafia.getProperty)("warProgress") === "finished" && (0, import_kolmafia.getProperty)("sidequestOrchardCompleted") === "none") ? (canBuy = !0, appropriateOutfit = "Filthy Hippy Disguise") : (0, import_kolmafia.haveOutfit)("Frat Warrior Fatigues") && moxie >= 70 && mysticality >= 70 && (0, import_kolmafia.getProperty)("warProgress") === "started" && (0, import_kolmafia.getProperty)("sidequestOrchardCompleted") === "fratboy" ? (canBuy = !0, appropriateOutfit = "Frat Warrior Fatigues") : (0, import_kolmafia.haveOutfit)("War Hippy Fatigues") && moxie >= 70 && mysticality >= 70 && (0, import_kolmafia.getProperty)("warProgress") === "started" && (0, import_kolmafia.getProperty)("sidequestOrchardCompleted") === "hippy" ? (canBuy = !0, appropriateOutfit = "War Hippy Fatigues") : (0, import_kolmafia.getProperty)("warProgress") === "finished" && (0, import_kolmafia.getProperty)("sidequestOrchardCompleted") !== "none" && (canBuy = !0));
-  for (var _i2 = 0, _finishedDrinks = finishedDrinks; _i2 < _finishedDrinks.length; _i2++) {
-    var eachBooze = _finishedDrinks[_i2], boozeItem = import_kolmafia.Item.get(eachBooze), ingredients = Object.keys((0, import_kolmafia.getIngredients)(boozeItem)), correctOrder = (0, import_kolmafia.itemType)(import_kolmafia.Item.get(ingredients[0])) === "booze", finisher = correctOrder ? ingredients[1] : ingredients[0], intermediateBooze = correctOrder ? ingredients[0] : ingredients[1];
+  for (var _i8 = 0, _finishedDrinks = finishedDrinks; _i8 < _finishedDrinks.length; _i8++) {
+    var eachBooze = _finishedDrinks[_i8], boozeItem = import_kolmafia.Item.get(eachBooze), ingredients = Object.keys((0, import_kolmafia.getIngredients)(boozeItem)), correctOrder = (0, import_kolmafia.itemType)(import_kolmafia.Item.get(ingredients[0])) === "booze", finisher = correctOrder ? ingredients[1] : ingredients[0], intermediateBooze = correctOrder ? ingredients[0] : ingredients[1];
     finisher in quantities.finishers || (quantities.finishers[finisher] = getItemAmount(finisher)), intermediateBooze in quantities.intermediateBoozes || (quantities.intermediateBoozes[intermediateBooze] = getItemAmount(intermediateBooze)), boozeItem.quality === "good" ? correctOrder ? levelOneAC[eachBooze] = {
       booze: ingredients[0],
       other: ingredients[1]
@@ -439,11 +453,22 @@ function main() {
     });
   }
   fillBoozeTrees(levelOneAC, levelTwoAC), relevantSkill === "SHC" && fillBoozeTrees(levelOneSHC, levelTwoSHC);
-  for (var i = 0; i < finishedDrinks.length; i -= -1) {
-    var quality = import_kolmafia.Item.get(finishedDrinks[i]).quality;
+  for (var _i9 = 0; _i9 < finishedDrinks.length; _i9 -= -1) {
+    var quality = import_kolmafia.Item.get(finishedDrinks[_i9]).quality;
     if (!(quality === "awesome" && relevantSkill === "AC" || quality === "good" && relevantSkill === "SHC")) {
       var tree = relevantSkill === "AC" ? levelOneAC : levelOneSHC;
-      if (quantities.intermediateBoozes[tree[finishedDrinks[i]].booze] > 0 && quantities.finishers[tree[finishedDrinks[i]].other] > 0 && (finalCombination.push(finishedDrinks[1]), quantities.intermediateBoozes[tree[finishedDrinks[i]].booze]--, quantities.finishers[tree[finishedDrinks[i]].other]--, i--, finalCombination.length === numberOfDrinksRequested)) {
+      if (quantities.intermediateBoozes[tree[finishedDrinks[_i9]].booze] > 0 && quantities.finishers[tree[finishedDrinks[_i9]].other] > 0 && (finalCombination.push(finishedDrinks[1]), quantities.intermediateBoozes[tree[finishedDrinks[_i9]].booze]--, quantities.finishers[tree[finishedDrinks[_i9]].other]--, _i9--, finalCombination.length === numberOfDrinksRequested)) {
+        var _iterator15 = _createForOfIteratorHelper(finalCombination), _step15;
+        try {
+          for (_iterator15.s(); !(_step15 = _iterator15.n()).done; ) {
+            var drink = _step15.value;
+            addToDo(drink, toCraft);
+          }
+        } catch (err) {
+          _iterator15.e(err);
+        } finally {
+          _iterator15.f();
+        }
         finalCraft();
         return;
       }
@@ -460,28 +485,28 @@ function main() {
   }, bestCombination = [], itemsUsedInCombination = [0, 0, 0], itemsToBuyInCombination = [], executeMainFunction(), finalCombination = finalCombination.concat(bestCombination), finalItemsToBuy = finalItemsToBuy.concat(itemsToBuyInCombination), finalCombination.length !== previousResultLength); )
     ;
   finalCombination.length < numberOfDrinksRequested && (0, import_kolmafia.print)("You only have sufficient resources to craft " + finalCombination.length.toString() + " drink" + (finalCombination.length === 1 ? "." : "s. Proceeding."));
-  var _iterator14 = _createForOfIteratorHelper(finalCombination), _step14;
+  var _iterator16 = _createForOfIteratorHelper(finalCombination), _step16;
   try {
-    for (_iterator14.s(); !(_step14 = _iterator14.n()).done; ) {
-      var drink = _step14.value;
-      addToDo(drink, toCraft);
+    for (_iterator16.s(); !(_step16 = _iterator16.n()).done; ) {
+      var _drink = _step16.value;
+      addToDo(_drink, toCraft);
     }
   } catch (err) {
-    _iterator14.e(err);
+    _iterator16.e(err);
   } finally {
-    _iterator14.f();
+    _iterator16.f();
   }
   if (canBuy) {
-    var _iterator15 = _createForOfIteratorHelper(finalItemsToBuy), _step15;
+    var _iterator17 = _createForOfIteratorHelper(finalItemsToBuy), _step17;
     try {
-      for (_iterator15.s(); !(_step15 = _iterator15.n()).done; ) {
-        var garnish = _step15.value;
+      for (_iterator17.s(); !(_step17 = _iterator17.n()).done; ) {
+        var garnish = _step17.value;
         addToDo(garnish, toBuy);
       }
     } catch (err) {
-      _iterator15.e(err);
+      _iterator17.e(err);
     } finally {
-      _iterator15.f();
+      _iterator17.f();
     }
     if (!finalBuy())
       return;
