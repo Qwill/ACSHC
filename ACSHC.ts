@@ -26,30 +26,21 @@ import {
     myMeat
 } from 'kolmafia'
 
-export function main(arg: string = ''): void {
+export function main(arg = ''): void {
 
     type BoozeTree = {[x in string]: {booze: string, other: string}}
     type Quantities = {baseBoozes: {[x in string]: number}, intermediateBoozes: {[x in string]: number}, garnishes: {[x in string]: number}, finishers: {[x in string]: number}}
 
     const finishedDrinks = ['tropical swill', 'pink pony', "slip 'n' slide", 'fuzzbump', 'ocean motion', 'fruity girl swill', 'ducha de oro', 'horizontal tango', 'roll in the hay', "a little sump'm sump'm", 'blended frozen swill', 'slap and tickle', "rockin' wagon", 'perpendicular hula', 'calle de miel', 'Neuromancer', 'vodka stratocaster', 'Mon Tiki', 'teqiwila slammer', 'Divine', 'Gordon Bennett', 'gimlet', 'yellow brick road', 'mandarina colada', 'tangarita', 'Mae West', 'prussian cathouse']
     
-    let requestedNumber = ''
-    let simOption = ''
-    let reachedSpace = false
-
-    for (let i = 0; i < arg.length; i++) {
-        if (arg[i] === ' ') reachedSpace = true
-        else if (!reachedSpace && !isNaN(Number(arg[i]))) requestedNumber += arg[i]
-        else if (reachedSpace) simOption += arg[i]
-    }
-
-    const sim = simOption.toLowerCase() === 'sim' ? true : false
+    const args = arg.split(' ')
+    const sim = args.length > 1 && args[1].toLowerCase() === 'sim' ? true : false
     const levelOneAC: BoozeTree = {} // these trees are to store ingredient associations. level one is the final drink and its ingredients, level two is the intermediate drink and its ingredients, and level three SHC is a special one to associate SHC garnishes with their base garnish
     const levelOneSHC: BoozeTree = {}
     const levelTwoAC: BoozeTree = {}
     const levelTwoSHC: BoozeTree = {}
     const levelThreeSHC: {[x in string]: string} = {}
-    const numberOfDrinksRequested = Number(requestedNumber)
+    const numberOfDrinksRequested = Number(args[0])
     const toCraft: [string, number][] = []
     const toBuy: [string, number][] = []
     const originalPref = getProperty('autoSatisfyWithNPCs') // this will be changed to true if buying garnishes, so save the original preference
@@ -118,7 +109,7 @@ export function main(arg: string = ''): void {
         output.push([whichItem, 1])
     }
 
-    // runs once before finalCraft if the user can buy from the hippy store
+    // runs once before finalCraft if the user can buy from the hippy store or if all they need to buy is soda water
     function finalBuy(): boolean {
         let outfitChanged = false
         if (toBuy.length === 0) return true
@@ -189,7 +180,7 @@ export function main(arg: string = ''): void {
         } else if (drink.indexOf('swill') === -1 && newQuantities.baseBoozes[levelTwoAC[levelOneAC[drink].booze].booze] > 0) { // do not check for swill ingredients as it has none
             newQuantities.baseBoozes[levelTwoAC[levelOneAC[drink].booze].booze]--
             if (newQuantities.garnishes[levelTwoAC[levelOneAC[drink].booze].other] === 0) {
-                if (canBuy) garnishesNeeded.push(levelTwoAC[levelOneAC[drink].booze].other)
+                if (canBuy || levelTwoAC[levelOneAC[drink].booze].other === 'soda water') garnishesNeeded.push(levelTwoAC[levelOneAC[drink].booze].other) // special check for soda water, as this is the one garnish that can be bought without access to the hippy store
                 else return false
             } else {
                 newQuantities.garnishes[levelTwoAC[levelOneAC[drink].booze].other]--
@@ -268,30 +259,21 @@ export function main(arg: string = ''): void {
 
     function noBuyAC(): void {
         for (let finishedDrink of finishedDrinks.filter(function(drink) { return Item.get(drink).quality === 'good' })) {
-            for (let i = 0; i < creatableAmount(Item.get(finishedDrink)) && i < 2; i++) possibleDrinks.push(finishedDrink) // note the "i < 2" present in this and all three other main functions. due to speed concerns with the cominbator function, even if a user can craft more than two of any drink, the additional possibilities are ignored. this brings the speed up to tolerable levels but may require the function to be run again. more on this later 
+            const tempQuantities: Quantities = JSON.parse(JSON.stringify(quantities))
+            while (possibleDrinks.filter(function(d) {return d === finishedDrink}).length < 2 && getACDrinkPossibility(finishedDrink, tempQuantities)) possibleDrinks.push(finishedDrink) // note the "i < 2" present in this and all three other main functions. due to speed concerns with the cominbator function, even if a user can craft more than two of any drink, the additional possibilities are ignored. this brings the speed up to tolerable levels but may require the function to be run again. more on this later 
         }
         if (possibleDrinks.length < remainingNumberOfDrinks) possibleCombinations = [possibleDrinks]
         else combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks)
         for (let possibility of possibleCombinations) {
-            const newQuantities: Quantities = JSON.parse(JSON.stringify(quantities))
+            const tempQuantities: Quantities = JSON.parse(JSON.stringify(quantities))
+            const garnishesToBuy: 'soda water'[] = []
             const usedItems: number[] = [0, 0, 0]
-            for (let i = 0; i < possibility.length; i++) { // an inconsistency. this is the only main function to not use a getDrinkPossibility function, since it is the only one in which the possibleDrinks can be satisfied by mafia's creatableAmount function. to be fixed
-                if (newQuantities.finishers[levelOneAC[possibility[i]].other] > 0) newQuantities.finishers[levelOneAC[possibility[i]].other]--
-                else {
-                    store(newQuantities, possibility.slice(0, i), usedItems)
+            for (let i = 0; i < possibility.length; i++) {
+                if (!getACDrinkPossibility(possibility[i], tempQuantities, usedItems, garnishesToBuy)) {
+                    store(tempQuantities, possibility.slice(0, i), usedItems, garnishesToBuy)
                     break
                 }
-                if (newQuantities.intermediateBoozes[levelOneAC[possibility[i]].booze] > 0) {
-                    newQuantities.intermediateBoozes[levelOneAC[possibility[i]].booze]--
-                    usedItems[0]++
-                } else if (newQuantities.baseBoozes[levelTwoAC[levelOneAC[possibility[i]].booze].booze] > 0 && newQuantities.garnishes[levelTwoAC[levelOneAC[possibility[i]].booze].other] > 0) {
-                    newQuantities.baseBoozes[levelTwoAC[levelOneAC[possibility[i]].booze].booze]--
-                    newQuantities.garnishes[levelTwoAC[levelOneAC[possibility[i]].booze].other]--
-                } else {
-                    store(newQuantities, possibility.slice(0, i), usedItems)
-                    break
-                }
-                if (i === possibility.length - 1) store(newQuantities, possibility, usedItems)
+                if (i === possibility.length - 1) store(tempQuantities, possibility, usedItems, garnishesToBuy)
             }
         }
     }
@@ -479,8 +461,8 @@ export function main(arg: string = ''): void {
     if (finalCombination.length < numberOfDrinksRequested) print('You only have sufficient resources to craft ' + finalCombination.length.toString() + ' drink' + (finalCombination.length === 1 ? '.' : 's. Proceeding.'))
     
     for (let drink of finalCombination) addToDo(drink, toCraft)
-    if (canBuy) {
-        for (let garnish of finalItemsToBuy) addToDo(garnish, toBuy)
+    for (let garnish of finalItemsToBuy) addToDo(garnish, toBuy)
+    if (canBuy || (toBuy.length === 1 && toBuy[0][0] === 'soda water')) { 
         if (!finalBuy()) return // if the script was somehow unable to buy the needed ingredients, abort and do not try to craft anything
     }
     finalCraft()
