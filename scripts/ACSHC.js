@@ -353,7 +353,7 @@ function main() {
     }
   if (numberOfDrinksRequested === 0)
     return (0, import_kolmafia.print)('You need to enter a number of drinks between 1 and 10. You can also add "sim" to the end to get a simulation of what this script would do.');
-  if (!(0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Advanced Cocktailcrafting")))
+  if (!(0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Advanced Cocktailcrafting")) && !(0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Mixologist")))
     return (0, import_kolmafia.print)("You need a cocktail crafting skill to use this command.");
   if (!("Queue Du Coq cocktailcrafting kit" in (0, import_kolmafia.getCampground)()))
     return (0, import_kolmafia.print)("You need to install a Queue Du Coq cocktailcrafting kit in your campground to craft advanced drinks.");
