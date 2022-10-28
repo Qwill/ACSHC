@@ -245,7 +245,7 @@ function main() {
   function store(storedQuantities, storedCombination, storedUsedItems) {
     var storedGarnishesToBuy = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : [], stillsRemaining = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : -1;
     function storeExecute() {
-      bestCombination = JSON.parse(JSON.stringify(storedCombination)), adjustedQuantities = JSON.parse(JSON.stringify(storedQuantities)), itemsUsedInCombination = JSON.parse(JSON.stringify(storedUsedItems)), canBuy && (itemsToBuyInCombination = JSON.parse(JSON.stringify(storedGarnishesToBuy))), stillsRemaining >= 0 && (remainingStills = stillsRemaining);
+      bestCombination = JSON.parse(JSON.stringify(storedCombination)), adjustedQuantities = JSON.parse(JSON.stringify(storedQuantities)), itemsUsedInCombination = JSON.parse(JSON.stringify(storedUsedItems)), itemsToBuyInCombination = JSON.parse(JSON.stringify(storedGarnishesToBuy)), stillsRemaining >= 0 && (remainingStills = stillsRemaining);
     }
     if (storedCombination.length > bestCombination.length || storedCombination.length === bestCombination.length && (storedUsedItems[0] > itemsUsedInCombination[0] || storedUsedItems[0] === itemsUsedInCombination[0] && storedUsedItems[1] > itemsUsedInCombination[1] || storedUsedItems[0] === itemsUsedInCombination[0] && storedUsedItems[1] === itemsUsedInCombination[1] && storedUsedItems[2] > itemsUsedInCombination[2]))
       return storeExecute();
@@ -417,7 +417,7 @@ function main() {
     } finally {
       _iterator9.f();
     }
-    (canBuy || toBuy.length === 1 && toBuy[0][0] === "soda water") && !finalBuy() || finalCraft();
+    (0, import_kolmafia.print)("DEBUG 1: " + JSON.stringify(toBuy)), !((canBuy || toBuy.length === 1 && toBuy[0][0] === "soda water") && !finalBuy()) && finalCraft();
   }
 }
 // Annotate the CommonJS export names for ESM import in node:
