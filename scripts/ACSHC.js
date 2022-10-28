@@ -207,7 +207,7 @@ function main() {
     (0, import_kolmafia.print)("Done!");
   }
   function getACDrinkPossibility(drink2, newQuantities, stills) {
-    var itemsUsed = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : [0, 0, 0], garnishesNeeded = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [];
+    var itemsUsed = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : [0, 0, 0], garnishesNeeded = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [], originalNewQuantities = JSON.parse(JSON.stringify(newQuantities));
     if (newQuantities.finishers[levelOneAC[drink2].other] > 0)
       newQuantities.finishers[levelOneAC[drink2].other]--;
     else
@@ -219,7 +219,7 @@ function main() {
         if (canBuy || levelTwoAC[levelOneAC[drink2].booze].other === "soda water")
           garnishesNeeded.push(levelTwoAC[levelOneAC[drink2].booze].other);
         else
-          return !1;
+          return newQuantities = originalNewQuantities, !1;
       else
         newQuantities.garnishes[levelTwoAC[levelOneAC[drink2].booze].other]--, itemsUsed[2]++;
     else
@@ -227,7 +227,7 @@ function main() {
     return !0;
   }
   function getSHCDrinkPossibility(drink2, newQuantities, stills) {
-    var itemsUsed = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : [0, 0, 0], itemsToBuy = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [];
+    var itemsUsed = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : [0, 0, 0], itemsToBuy = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [], originalNewQuantities = JSON.parse(JSON.stringify(newQuantities)), originalStills = JSON.parse(JSON.stringify(stills)), originalItemsUsed = JSON.parse(JSON.stringify(itemsUsed)), originalItemsToBuy = JSON.parse(JSON.stringify(itemsToBuy));
     if (newQuantities.finishers[levelOneSHC[drink2].other] > 0)
       newQuantities.finishers[levelOneSHC[drink2].other]--;
     else
@@ -238,7 +238,8 @@ function main() {
       newQuantities.baseBoozes[levelTwoSHC[levelOneSHC[drink2].booze].booze]--, newQuantities.baseBoozes[levelTwoSHC[levelOneSHC[drink2].booze].other]--, itemsUsed[1] += 2;
     else {
       var baseBoozeSatisfied = !1, baseGarnishSatisfied = !1;
-      return newQuantities.baseBoozes[levelTwoSHC[levelOneSHC[drink2].booze].booze] > 0 ? (newQuantities.baseBoozes[levelTwoSHC[levelOneSHC[drink2].booze].booze]--, itemsUsed[1]++, baseBoozeSatisfied = !0) : newQuantities.baseBoozes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].booze]] > 0 && stills.stills > 0 && (newQuantities.baseBoozes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].booze]]--, stills.stills--, baseBoozeSatisfied = !0), newQuantities.garnishes[levelTwoSHC[levelOneSHC[drink2].booze].other] > 0 ? (newQuantities.garnishes[levelTwoSHC[levelOneSHC[drink2].booze].other]--, itemsUsed[1]++, baseGarnishSatisfied = !0) : stills.stills > 0 && (newQuantities.garnishes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other]] > 0 ? (newQuantities.garnishes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other]]--, itemsUsed[2]++, baseGarnishSatisfied = !0) : (canBuy || levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other] === "soda water") && (itemsToBuy.push(levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other]), stills.stills--, baseGarnishSatisfied = !0)), baseBoozeSatisfied && baseGarnishSatisfied;
+      if (newQuantities.baseBoozes[levelTwoSHC[levelOneSHC[drink2].booze].booze] > 0 ? (newQuantities.baseBoozes[levelTwoSHC[levelOneSHC[drink2].booze].booze]--, itemsUsed[1]++, baseBoozeSatisfied = !0) : newQuantities.baseBoozes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].booze]] > 0 && stills.stills > 0 && (newQuantities.baseBoozes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].booze]]--, stills.stills--, baseBoozeSatisfied = !0), newQuantities.garnishes[levelTwoSHC[levelOneSHC[drink2].booze].other] > 0 ? (newQuantities.garnishes[levelTwoSHC[levelOneSHC[drink2].booze].other]--, itemsUsed[1]++, baseGarnishSatisfied = !0) : stills.stills > 0 && (newQuantities.garnishes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other]] > 0 ? (newQuantities.garnishes[levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other]]--, itemsUsed[2]++, baseGarnishSatisfied = !0) : (canBuy || levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other] === "soda water") && (itemsToBuy.push(levelThreeSHC[levelTwoSHC[levelOneSHC[drink2].booze].other]), stills.stills--, baseGarnishSatisfied = !0)), !(baseBoozeSatisfied && baseGarnishSatisfied))
+        return newQuantities = originalNewQuantities, stills = originalStills, itemsUsed = originalItemsUsed, itemsToBuy = originalItemsToBuy, !1;
     }
     return !0;
   }
@@ -417,7 +418,7 @@ function main() {
     } finally {
       _iterator9.f();
     }
-    (0, import_kolmafia.print)("DEBUG 1: " + JSON.stringify(toBuy)), !((canBuy || toBuy.length === 1 && toBuy[0][0] === "soda water") && !finalBuy()) && finalCraft();
+    (canBuy || toBuy.length === 1 && toBuy[0][0] === "soda water") && !finalBuy() || finalCraft();
   }
 }
 // Annotate the CommonJS export names for ESM import in node:
