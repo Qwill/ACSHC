@@ -1,4 +1,4 @@
-# ACSHC
+# ACSHC v1.0.0
 
 This is a Kingdom of Loathing Mafia script for automating Advanced Cocktailcrafting and Superhuman Cocktailcrafting. It is designed for hardcore runs when you have limited ingredients and want to maximize the number of drinks you can craft. It will work outside of hardcore, but it will be slower and you probably have better options.
 
@@ -13,5 +13,7 @@ Some paths prohibit certain AC/SHC drinks. If you are in a "Bees Hate You", "G-L
 Parameters do not have to be in any particular order. `ACSHC fill ac sim` is equivalent to `ACSHC ac sim fill`. They are also not case sensitive.
 
 To install the script, type `git checkout Qwill/ACSHC release` into Mafia's CLI.
+
+If your version is lower than one listed above, please update with `git update Qwill-ACSHC-release`.
 
 Kmail any issues, questions, or requests to Kuile (#3541381)

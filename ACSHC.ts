@@ -31,42 +31,44 @@ import {
 
 export function main(arg = ''): void {
 
+    print('ACSHC v1.0.0')
+
     type BoozeTree = {[x in string]: {booze: string, other: string}}
     type Quantities = {baseBoozes: {[x in string]: number}, intermediateBoozes: {[x in string]: number}, garnishes: {[x in string]: number}, finishers: {[x in string]: number}}
 
     let finishedDrinks = ['tropical swill', 'pink pony', 'slip \'n\' slide', 'fuzzbump', 'ocean motion', 'fruity girl swill', 'ducha de oro', 'horizontal tango', 'roll in the hay', 'a little sump\'m sump\'m', 'blended frozen swill', 'slap and tickle', 'rockin\' wagon', 'perpendicular hula', 'calle de miel', 'Neuromancer', 'vodka stratocaster', 'Mon Tiki', 'teqiwila slammer', 'Divine', 'Gordon Bennett', 'gimlet', 'yellow brick road', 'mandarina colada', 'tangarita', 'Mae West', 'prussian cathouse']
     
-    const levelOneAC: BoozeTree = {} // these trees are to store ingredient associations. level one is the final drink and its ingredients, level two is the intermediate drink and its ingredients, and level three SHC is a special one to associate SHC garnishes with their base garnish
+    const levelOneAC: BoozeTree = {} // these trees are to store ingredient associations. level one is the final drink and its ingredients, level two is the intermediate drink and its ingredients, and level three SHC is a special one to associate SHC boozes and garnishes with their base boozes and garnishes
     const levelOneSHC: BoozeTree = {}
     const levelTwoAC: BoozeTree = {}
     const levelTwoSHC: BoozeTree = {}
     const levelThreeSHC: {[x in string]: string} = {}
-    const toCraft: [string, number][] = []
-    const toBuy: [string, number][] = []
+    const toCraft: [string, number][] = [] // final list of drinks to craft
+    const toBuy: [string, number][] = [] // final list of garnishes to buy
     const originalPref = getProperty('autoSatisfyWithNPCs') // this will be changed to true if buying garnishes, so save the original preference
     const mysticality = myBasestat(toStat('Mysticality')) // stats required to equip the appropriate outfit for the hippy store if needed
     const moxie = myBasestat(toStat('Moxie'))
     const canCraftSHC = haveSkill(Skill.get('Mixologist')) || (haveSkill(Skill.get('Superhuman Cocktailcrafting')) && (myClass().toString() === 'Accordion Thief' || myClass().toString() === 'Disco Bandit') && guildStoreAvailable()) ? true : false
     const args = arg.split(' ')
-    let override = false
-    let drinkSkill = ''
+    let override = false // if on a run where drinks are partially restricted, setting this boolean to true will override the path restrictions and consider all drink possibilities
+    let drinkSkill = '' // optionally force a particular cocktailcrafting skill to be used
     let sim = false
     let numberOfDrinksRequested = 0
-    let quantities: Quantities = {baseBoozes: {}, intermediateBoozes: {}, garnishes: {}, finishers: {}} // quantities on hand. does not include closet
+    let quantities: Quantities = {baseBoozes: {}, intermediateBoozes: {}, garnishes: {}, finishers: {}} // ingredient quantites on hand. IMPORTANT: does not include closet
     let relevantSkill: 'AC' | 'SHC' = 'AC'
     let availableStills = stillsAvailable()
-    let canBuy = false
-    let appropriateOutfit = ''
+    let canBuy = false // whether a player can buy from the Hippy Store
+    let appropriateOutfit = '' // correct outfit to use when buying from the Hippy Store (if any)
     let finalCombination: string[] = []
     let finalItemsToBuy: string[] = []
     let remainingNumberOfDrinks = numberOfDrinksRequested // same as numberOfDrinksRequested, but decremented each loop of the script as needed
     let possibleDrinks: string[] = [] // each combination test will fill this out to be compared
     let possibleCombinations: string[][] = [] // changes on each loop: this is the total list of craftable drinks, including duplicates if the user can craft more than one
-    let adjustedQuantities: Quantities = {baseBoozes: {}, intermediateBoozes: {}, garnishes: {}, finishers: {}} // same as quantities but reset and modified to consider every combination
+    let adjustedQuantities: Quantities = {baseBoozes: {}, intermediateBoozes: {}, garnishes: {}, finishers: {}} // same as quantities but reset on every combination check
     let bestCombination: string[] = [] // every combination calculated is tested against this array and overwrites it if it a better one
-    let itemsUsedInCombination: number[] = [0, 0, 0] // stats to consider when comparing combinations with equal numbers of drinks. the elements are on-hand intermediate boozes used, distilled boozes/garnishes used, garnishes used. array is in order of importance and highest number wins
-    let itemsToBuyInCombination: string[] = [] // matched to bestCombination
-    let remainingStills = availableStills // reset and modified on each combination
+    let itemsUsedInCombination: number[] = [0, 0, 0] // stats to consider when comparing combinations with equal numbers of drinks. the elements are on-hand intermediate drinks used, distilled boozes/garnishes used, base garnishes used. array is in order of importance and highest number wins
+    let itemsToBuyInCombination: string[] = [] // garnishes to buy for the current bestCombination
+    let remainingStills = availableStills // same as availableStills but reset on each combination check
 
     function getItemAmount(whichItem: string): number {
         return itemAmount(Item.get(whichItem))
@@ -89,9 +91,9 @@ export function main(arg = ''): void {
         }
     }
 
-    // if there are any intermediate drinks already in inventory, craft them first if possible. it requires little logic, takes fewer turns in case of SHC, and is preferable to using up the base ingredients
+    // if there are any intermediate drinks already in inventory, craft them first if possible. it requires little logic, takes fewer turns in case of SHC, and is preferable to using up the base ingredients. only returns true if it satisfies the user's request
     function craftIntermediaries(): boolean {
-        for (let i = 0; i < finishedDrinks.length; i -=- 1) {
+        for (let i = 0; i < finishedDrinks.length; i++) {
             const quality: string = Item.get(finishedDrinks[i]).quality
             if ((quality === 'awesome' && relevantSkill === 'AC') || (quality === 'good' && relevantSkill === 'SHC')) continue
             const tree: BoozeTree = relevantSkill === 'AC' ? levelOneAC : levelOneSHC
@@ -110,7 +112,7 @@ export function main(arg = ''): void {
         return false
     }
 
-    // gives preference to using intermediate drinks on hand, and to using owned garnishes rather than buying. itemsUsed reflects these preferences
+    // returns whether a given drink can be crafted. if successful, decrements the appropriate values in the passed Quantities object. also changes itemsUsed for comparison purposes
     function getACDrinkPossibility(drink: string, newQuantities: Quantities, stills: {stills: number}, itemsUsed: number[] = [0, 0, 0], garnishesNeeded: string[] = []): boolean {
         const originalNewQuantities = JSON.parse(JSON.stringify(newQuantities))
         if (newQuantities.finishers[levelOneAC[drink].other] > 0) newQuantities.finishers[levelOneAC[drink].other]--
@@ -189,7 +191,7 @@ export function main(arg = ''): void {
         return true
     }
     
-    // input is all possible drinks that the user can craft, including possible duplicates if they can craft more than one. modifies output to contain all possible combinations of size "size". output must be defined outside since the function returns nothing. this is the slow part of the script. input size seems more of a factor than combination size, but both affect speed.
+    // input is all possible drinks that the user can craft, including possible duplicates if they can craft more than one. modifies output to contain all possible combinations of size "size". output must be defined outside since the function returns nothing. this is the slowest part of the script. input size seems more of a factor than combination size, but both affect speed.
     function combinator(input: string[], output: string[][], data: string[], start: number, end: number, index: number, size: number): void {
         if (index === size) output.push(data.slice(0, size))
         for (let i = start; i <= end && end - i + 1 >= size - index; i++) {
@@ -215,12 +217,13 @@ export function main(arg = ''): void {
         }
     }
 
+    // finds the best combination of drinks (based on highest number of drinks, secondarily based on the stats in itemsUsed/usedItems). may need to be run multiple times; see comment below
     function getDrinks(): void {
         const getDrinkPossibility = relevantSkill === 'AC' ? getACDrinkPossibility : getSHCDrinkPossibility
         for (let finishedDrink of finishedDrinks.filter(function(drink) { return Item.get(drink).quality === (relevantSkill === 'AC' ? 'good' : 'awesome')})) {
             const tempQuantities: Quantities = JSON.parse(JSON.stringify(quantities))
             const tempStills: {stills: number} = {stills: availableStills}
-            while (possibleDrinks.filter(function(d) {return d === finishedDrink}).length < 2 && getDrinkPossibility(finishedDrink, tempQuantities, tempStills)) possibleDrinks.push(finishedDrink) // note the "i < 2" present in this and all three other main functions. due to speed concerns with the cominbator function, even if a user can craft more than two of any drink, the additional possibilities are ignored. this brings the speed up to tolerable levels but may require the function to be run again. more on this later 
+            while (possibleDrinks.filter(function(d) {return d === finishedDrink}).length < 2 && getDrinkPossibility(finishedDrink, tempQuantities, tempStills)) possibleDrinks.push(finishedDrink) // note the limit of 2 present in this function. due to speed concerns with the cominbator function, even if a user can craft more than two of any drink, the additional possibilities are ignored. this brings the speed up to tolerable levels but may require the function to be run again. more on this at the end of the code 
         }
         if (possibleDrinks.length < remainingNumberOfDrinks) possibleCombinations = [possibleDrinks]
         else combinator(possibleDrinks, possibleCombinations, Array(remainingNumberOfDrinks), 0, possibleDrinks.length - 1, 0, remainingNumberOfDrinks)
@@ -240,7 +243,7 @@ export function main(arg = ''): void {
     }
 
     function getAllDrinks(): boolean { // returns whether the requested number of drinks has been satisfied
-        let previousResultLength = 0
+        let previousResultLength = 0 // previous results must be tracked to make sure the script is making progress
         remainingNumberOfDrinks = numberOfDrinksRequested - finalCombination.length
 
         getDrinks()
@@ -251,7 +254,7 @@ export function main(arg = ''): void {
         if (finalCombination.length === 0) return false
 
         while (finalCombination.length < numberOfDrinksRequested) { // due to the limitation of only being able to craft two of any type of drink, it may be necessary to rerun the script in case the optimal combination involves more than two of any drink
-            previousResultLength = finalCombination.length // previous results must be tracked to make sure the script is making progress
+            previousResultLength = finalCombination.length
             quantities = JSON.parse(JSON.stringify(adjustedQuantities))
             availableStills = remainingStills
             remainingNumberOfDrinks = numberOfDrinksRequested - finalCombination.length
@@ -391,7 +394,7 @@ export function main(arg = ''): void {
 
     // was not sure about including this part, but the script really is not intended for non-hardcore usage.
     if (!inHardcore()) {
-        print('You don\'t seem to be in a Hardcore run. This script will still work, but it will be slow and you probably have better options.')
+        print('You don\'t seem to be in a Hardcore run. This script will still work, but it may be slow and you probably have better options.')
     }
 
     // some paths allow certain AC/SHC drinks but not others. unless the override arg was provided, trim down finishedDrinks
@@ -454,6 +457,7 @@ export function main(arg = ''): void {
     
     for (let drink of finalCombination) addToDo(drink, toCraft)
     for (let garnish of finalItemsToBuy) addToDo(garnish, toBuy)
+    
     if (canBuy || (toBuy.length === 1 && toBuy[0][0] === 'soda water')) { 
         if (!finalBuy()) return // if the script was somehow unable to buy the needed ingredients, abort and do not try to craft anything
     }
