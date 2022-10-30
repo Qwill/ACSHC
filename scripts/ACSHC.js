@@ -84,7 +84,9 @@ function _arrayLikeToArray(arr, len) {
   return arr2;
 }
 function main() {
-  var arg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "", finishedDrinks = ["tropical swill", "pink pony", "slip 'n' slide", "fuzzbump", "ocean motion", "fruity girl swill", "ducha de oro", "horizontal tango", "roll in the hay", "a little sump'm sump'm", "blended frozen swill", "slap and tickle", "rockin' wagon", "perpendicular hula", "calle de miel", "Neuromancer", "vodka stratocaster", "Mon Tiki", "teqiwila slammer", "Divine", "Gordon Bennett", "gimlet", "yellow brick road", "mandarina colada", "tangarita", "Mae West", "prussian cathouse"], levelOneAC = {}, levelOneSHC = {}, levelTwoAC = {}, levelTwoSHC = {}, levelThreeSHC = {}, toCraft = [], toBuy = [], originalPref = (0, import_kolmafia.getProperty)("autoSatisfyWithNPCs"), mysticality = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Mysticality")), moxie = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Moxie")), canCraftSHC = !!((0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Mixologist")) || (0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Superhuman Cocktailcrafting")) && ((0, import_kolmafia.myClass)().toString() === "Accordion Thief" || (0, import_kolmafia.myClass)().toString() === "Disco Bandit") && (0, import_kolmafia.guildStoreAvailable)()), args = arg.split(" "), override = !1, drinkSkill = "", sim = !1, numberOfDrinksRequested = 0, quantities = {
+  var arg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "";
+  (0, import_kolmafia.print)("ACSHC v1.0.0");
+  var finishedDrinks = ["tropical swill", "pink pony", "slip 'n' slide", "fuzzbump", "ocean motion", "fruity girl swill", "ducha de oro", "horizontal tango", "roll in the hay", "a little sump'm sump'm", "blended frozen swill", "slap and tickle", "rockin' wagon", "perpendicular hula", "calle de miel", "Neuromancer", "vodka stratocaster", "Mon Tiki", "teqiwila slammer", "Divine", "Gordon Bennett", "gimlet", "yellow brick road", "mandarina colada", "tangarita", "Mae West", "prussian cathouse"], levelOneAC = {}, levelOneSHC = {}, levelTwoAC = {}, levelTwoSHC = {}, levelThreeSHC = {}, toCraft = [], toBuy = [], originalPref = (0, import_kolmafia.getProperty)("autoSatisfyWithNPCs"), mysticality = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Mysticality")), moxie = (0, import_kolmafia.myBasestat)((0, import_kolmafia.toStat)("Moxie")), canCraftSHC = !!((0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Mixologist")) || (0, import_kolmafia.haveSkill)(import_kolmafia.Skill.get("Superhuman Cocktailcrafting")) && ((0, import_kolmafia.myClass)().toString() === "Accordion Thief" || (0, import_kolmafia.myClass)().toString() === "Disco Bandit") && (0, import_kolmafia.guildStoreAvailable)()), args = arg.split(" "), override = !1, drinkSkill = "", sim = !1, numberOfDrinksRequested = 0, quantities = {
     baseBoozes: {},
     intermediateBoozes: {},
     garnishes: {},
@@ -115,7 +117,7 @@ function main() {
     }
   }
   function craftIntermediaries() {
-    for (var i2 = 0; i2 < finishedDrinks.length; i2 -= -1) {
+    for (var i2 = 0; i2 < finishedDrinks.length; i2++) {
       var quality = import_kolmafia.Item.get(finishedDrinks[i2]).quality;
       if (!(quality === "awesome" && relevantSkill === "AC" || quality === "good" && relevantSkill === "SHC")) {
         var tree = relevantSkill === "AC" ? levelOneAC : levelOneSHC;
@@ -362,7 +364,7 @@ function main() {
     return (0, import_kolmafia.print)("You need a cocktail crafting skill to use this command.");
   if (!("Queue Du Coq cocktailcrafting kit" in (0, import_kolmafia.getCampground)()))
     return (0, import_kolmafia.print)("You need to install a Queue Du Coq cocktailcrafting kit in your campground to craft advanced drinks.");
-  if ((0, import_kolmafia.inHardcore)() || (0, import_kolmafia.print)("You don't seem to be in a Hardcore run. This script will still work, but it will be slow and you probably have better options."), override || ((0, import_kolmafia.myPath)() === import_kolmafia.Path.get("License to Adventure") && (finishedDrinks = ["gibson", "vodka gibson", "rockin' wagon"]), (0, import_kolmafia.myPath)() === import_kolmafia.Path.get("Bees Hate You") && (finishedDrinks = finishedDrinks.filter(function(drink2) {
+  if ((0, import_kolmafia.inHardcore)() || (0, import_kolmafia.print)("You don't seem to be in a Hardcore run. This script will still work, but it may be slow and you probably have better options."), override || ((0, import_kolmafia.myPath)() === import_kolmafia.Path.get("License to Adventure") && (finishedDrinks = ["gibson", "vodka gibson", "rockin' wagon"]), (0, import_kolmafia.myPath)() === import_kolmafia.Path.get("Bees Hate You") && (finishedDrinks = finishedDrinks.filter(function(drink2) {
     return drink2.indexOf("b") === -1 && drink2.indexOf("B") === -1;
   })), (0, import_kolmafia.myPath)() === import_kolmafia.Path.get("G-Lover") && (finishedDrinks = finishedDrinks.filter(function(drink2) {
     return drink2.indexOf("g") !== -1 || drink2.indexOf("G") !== -1;
