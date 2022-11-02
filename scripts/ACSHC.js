@@ -121,7 +121,7 @@ function main() {
       var quality = import_kolmafia.Item.get(finishedDrinks[i2]).quality;
       if (!(quality === "awesome" && relevantSkill === "AC" || quality === "good" && relevantSkill === "SHC")) {
         var tree = relevantSkill === "AC" ? levelOneAC : levelOneSHC;
-        if (quantities.intermediateBoozes[tree[finishedDrinks[i2]].booze] > 0 && quantities.finishers[tree[finishedDrinks[i2]].other] > 0 && (finalCombination.push(finishedDrinks[1]), quantities.intermediateBoozes[tree[finishedDrinks[i2]].booze]--, quantities.finishers[tree[finishedDrinks[i2]].other]--, i2--, finalCombination.length === numberOfDrinksRequested)) {
+        if (quantities.intermediateBoozes[tree[finishedDrinks[i2]].booze] > 0 && quantities.finishers[tree[finishedDrinks[i2]].other] > 0 && (finalCombination.push(finishedDrinks[i2]), quantities.intermediateBoozes[tree[finishedDrinks[i2]].booze]--, quantities.finishers[tree[finishedDrinks[i2]].other]--, i2--, finalCombination.length === numberOfDrinksRequested)) {
           var _iterator = _createForOfIteratorHelper(finalCombination), _step;
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done; ) {
@@ -394,7 +394,7 @@ function main() {
   } finally {
     _iterator7.f();
   }
-  if (fillBoozeTrees(levelOneAC, levelTwoAC), (0, import_kolmafia.print)(JSON.stringify(levelOneAC)), (0, import_kolmafia.print)(JSON.stringify(levelTwoAC)), relevantSkill === "SHC" && fillBoozeTrees(levelOneSHC, levelTwoSHC), !craftIntermediaries()) {
+  if (fillBoozeTrees(levelOneAC, levelTwoAC), relevantSkill === "SHC" && fillBoozeTrees(levelOneSHC, levelTwoSHC), !craftIntermediaries()) {
     if (!getAllDrinks() && drinkSkill === "both" && (relevantSkill = "AC", getAllDrinks()), finalCombination.length === 0)
       return (0, import_kolmafia.print)("You do not have the resources to craft any " + (drinkSkill === "both" ? "AC or SHC" : relevantSkill) + " drinks.");
     finalCombination.length < numberOfDrinksRequested && (0, import_kolmafia.print)("You only have sufficient resources to craft " + finalCombination.length.toString() + " drink" + (finalCombination.length === 1 ? "" : "s. Proceeding..."));
