@@ -7,7 +7,6 @@ import {
     haveSkill,
     Skill,
     stillsAvailable,
-    hippyStoreAvailable,
     getProperty,
     haveOutfit,
     create,
@@ -31,7 +30,7 @@ import {
 
 export function main(arg = ''): void {
 
-    print('ACSHC v1.0.0')
+    print('ACSHC v1.0.1')
 
     type BoozeTree = {[x in string]: {booze: string, other: string}}
     type Quantities = {baseBoozes: {[x in string]: number}, intermediateBoozes: {[x in string]: number}, garnishes: {[x in string]: number}, finishers: {[x in string]: number}}
@@ -98,7 +97,7 @@ export function main(arg = ''): void {
             if ((quality === 'awesome' && relevantSkill === 'AC') || (quality === 'good' && relevantSkill === 'SHC')) continue
             const tree: BoozeTree = relevantSkill === 'AC' ? levelOneAC : levelOneSHC
             if (quantities.intermediateBoozes[tree[finishedDrinks[i]].booze] > 0 && quantities.finishers[tree[finishedDrinks[i]].other] > 0) {
-                finalCombination.push(finishedDrinks[1])
+                finalCombination.push(finishedDrinks[i])
                 quantities.intermediateBoozes[tree[finishedDrinks[i]].booze]--
                 quantities.finishers[tree[finishedDrinks[i]].other]--
                 i--
@@ -409,7 +408,7 @@ export function main(arg = ''): void {
     if (drinkSkill === 'shc' || drinkSkill === 'both' || (canCraftSHC && drinkSkill !== 'ac')) relevantSkill = 'SHC'
     
     // checks for appropriate outfit (if any) for accessing the hippy store and ensures the user has the stats to wear it
-    if (hippyStoreAvailable()) {
+    if (getItemAmount('dingy dinghy') > 0 || getItemAmount('junk junk') > 0 || getItemAmount('skeletal skiff') > 0 || getItemAmount('yellow submarine') > 0 || getProperty('peteMotorbikeGasTank') === 'Extra-Buoyant Tank') {
         if (haveOutfit('Filthy Hippy Disguise') && moxie >= 15 && (getProperty('warProgress') === 'unstarted' || (getProperty('warProgress') === 'finished' && getProperty('sidequestOrchardCompleted') === 'none'))) {
             canBuy = true
             appropriateOutfit = 'Filthy Hippy Disguise'
@@ -443,6 +442,7 @@ export function main(arg = ''): void {
     }
 
     fillBoozeTrees(levelOneAC, levelTwoAC) // AC drink ingredients are relevant even if the user is making SHC, mainly due to needing to know the garnishes, so this always runs
+
     if (relevantSkill === 'SHC') fillBoozeTrees(levelOneSHC, levelTwoSHC)
 
     if (craftIntermediaries()) return
@@ -457,7 +457,7 @@ export function main(arg = ''): void {
     
     for (let drink of finalCombination) addToDo(drink, toCraft)
     for (let garnish of finalItemsToBuy) addToDo(garnish, toBuy)
-    
+
     if (canBuy || (toBuy.length === 1 && toBuy[0][0] === 'soda water')) { 
         if (!finalBuy()) return // if the script was somehow unable to buy the needed ingredients, abort and do not try to craft anything
     }

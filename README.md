@@ -1,4 +1,4 @@
-# ACSHC v1.0.0
+# ACSHC v1.0.1
 
 This is a Kingdom of Loathing Mafia script for automating Advanced Cocktailcrafting and Superhuman Cocktailcrafting. It is designed for hardcore runs when you have limited ingredients and want to maximize the number of drinks you can craft. It will work outside of hardcore, but it will be slower and you probably have better options.
 
